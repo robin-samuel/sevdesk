@@ -14,10 +14,10 @@ const (
 //	c.Contacts.Get(ctx, 42)
 //	c.Invoices.List(ctx, nil)
 type Client struct {
-	httpClient *http.Client
-	baseURL    string
-	apiKey     string
-	userAgent  string
+	client    *http.Client
+	baseURL   string
+	apiKey    string
+	userAgent string
 
 	Contacts                   *ContactsService
 	ContactAddresses           *ContactAddressesService
@@ -40,10 +40,10 @@ type Client struct {
 // New returns a Client authenticated with the given API key.
 func New(apiKey string, opts ...Option) *Client {
 	c := &Client{
-		httpClient: http.DefaultClient,
-		baseURL:    defaultBaseURL,
-		apiKey:     apiKey,
-		userAgent:  defaultUserAgent,
+		client:    http.DefaultClient,
+		baseURL:   defaultBaseURL,
+		apiKey:    apiKey,
+		userAgent: defaultUserAgent,
 	}
 	for _, opt := range opts {
 		opt(c)

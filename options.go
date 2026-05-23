@@ -8,7 +8,7 @@ type Option func(*Client)
 // WithHTTPClient sets the underlying HTTP client. Useful for injecting
 // custom timeouts, transports, or test doubles.
 func WithHTTPClient(h *http.Client) Option {
-	return func(c *Client) { c.httpClient = h }
+	return func(c *Client) { c.client = h }
 }
 
 // WithBaseURL overrides the API base URL. Defaults to https://my.sevdesk.de/api/v1.

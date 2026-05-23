@@ -474,7 +474,7 @@ func (s *VouchersService) UploadFile(ctx context.Context, filename string, file 
 		req.Header.Set("User-Agent", s.c.userAgent)
 	}
 
-	resp, err := s.c.httpClient.Do(req)
+	resp, err := s.c.client.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("sevdesk: upload: %w", err)
 	}
