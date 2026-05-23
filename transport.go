@@ -53,7 +53,7 @@ func (c *Client) do(ctx context.Context, method, path string, query url.Values, 
 	}
 
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return nil, parseError(resp.StatusCode, respBytes)
+		return nil, parseError(method, path, resp.StatusCode, respBytes)
 	}
 	if len(respBytes) == 0 {
 		return nil, nil
@@ -69,8 +69,13 @@ func (c *Client) do(ctx context.Context, method, path string, query url.Values, 
 }
 
 // parseError builds an Error from a non-2xx response.
-func parseError(status int, body []byte) *Error {
-	e := &Error{StatusCode: status, Body: body}
+func parseError(method, path string, status int, body []byte) *Error {
+	e := &Error{
+		StatusCode: status,
+		Method:     method,
+		Path:       path,
+		Body:       body,
+	}
 	var wrap struct {
 		Error struct {
 			Message       string `json:"message"`

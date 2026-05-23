@@ -484,7 +484,7 @@ func (s *VouchersService) UploadFile(ctx context.Context, filename string, file 
 		return nil, err
 	}
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return nil, parseError(resp.StatusCode, respBytes)
+		return nil, parseError(http.MethodPost, "/Voucher/Factory/uploadTempFile", resp.StatusCode, respBytes)
 	}
 	var env struct {
 		Objects VoucherUpload `json:"objects"`

@@ -110,16 +110,22 @@ c := sevdesk.New("KEY",
 
 ## Errors
 
-Non-2xx responses return a `*sevdesk.Error` with the status code, message, and the sevdesk exception UUID (when present):
+Non-2xx responses return a `*sevdesk.Error` with the status, method, path, message, and the sevdesk exception UUID (when present). Sentinels cover the common cases — match them with `errors.Is`:
 
 ```go
 contact, err := c.Contacts.Get(ctx, 999999)
-if errors.Is(err, sevdesk.ErrNotFound) {
-	// 404
+switch {
+case errors.Is(err, sevdesk.ErrNotFound):     // 404
+case errors.Is(err, sevdesk.ErrUnauthorized): // 401 — bad API key
+case errors.Is(err, sevdesk.ErrForbidden):    // 403
+case errors.Is(err, sevdesk.ErrConflict):     // 409 — e.g. deleting a non-draft
+case errors.Is(err, sevdesk.ErrRateLimit):    // 429
 }
+
 var apiErr *sevdesk.Error
 if errors.As(err, &apiErr) {
-	log.Printf("status=%d uuid=%s msg=%s", apiErr.StatusCode, apiErr.UUID, apiErr.Message)
+	log.Printf("%s %s -> %d %s (%s)",
+		apiErr.Method, apiErr.Path, apiErr.StatusCode, apiErr.Message, apiErr.UUID)
 }
 ```
 
