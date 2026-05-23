@@ -1,0 +1,37 @@
+# Compiled binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test artifacts
+*.test
+*.out
+coverage.txt
+coverage.html
+
+# Dependency directories (when vendoring)
+vendor/
+
+# Go workspace files
+go.work
+go.work.sum
+
+# Editor / IDE
+.idea/
+.vscode/
+.zed/
+*.swp
+*.swo
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Local secrets and scratch
+.env
+.env.*
+*.local
+scratch/
+sevdesk.yaml
