@@ -57,6 +57,8 @@ Each resource hangs off the `Client` as its own service:
 | `c.PrivateTransactionRules` | Rules for auto-marking transactions as private |
 | `c.Parts` | Inventory items |
 | `c.Tags` | Tags attachable to invoices, orders, vouchers, credit notes |
+| `c.AccountingTypes` | List/get booking accounts (sevdesk **v1** bookkeeping). 125 German entries are also embedded as named `*Ref` variables (e.g. `sevdesk.AccountingTypePetrol`) for direct use in Params. |
+| `c.ReceiptGuidance` | Look up AccountingType IDs by DATEV account number, tax rule, or category (sevdesk **v2**) |
 
 Full method reference: [pkg.go.dev/github.com/robin-samuel/sevdesk](https://pkg.go.dev/github.com/robin-samuel/sevdesk).
 

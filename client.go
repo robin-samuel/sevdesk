@@ -35,6 +35,8 @@ type Client struct {
 	Parts                      *PartsService
 	Tags                       *TagsService
 	PrivateTransactionRules    *PrivateTransactionRulesService
+	AccountingTypes            *AccountingTypesService
+	ReceiptGuidance            *ReceiptGuidanceService
 }
 
 // New returns a Client authenticated with the given API key.
@@ -64,5 +66,7 @@ func New(apiKey string, opts ...Option) *Client {
 	c.Parts = &PartsService{c: c}
 	c.Tags = &TagsService{c: c}
 	c.PrivateTransactionRules = &PrivateTransactionRulesService{c: c}
+	c.AccountingTypes = &AccountingTypesService{c: c}
+	c.ReceiptGuidance = &ReceiptGuidanceService{c: c}
 	return c
 }
