@@ -174,13 +174,51 @@ type UpdateContactParams struct {
 	GovernmentAgency          *Bool    `json:"governmentAgency,omitempty"`
 }
 
+// SortDirection picks an ordering for List endpoints that support it.
+type SortDirection string
+
+// SortDirection values.
+const (
+	// SortAsc orders results ascending.
+	SortAsc SortDirection = "ASC"
+	// SortDesc orders results descending.
+	SortDesc SortDirection = "DESC"
+)
+
 // ListContactsParams filters the result of [ContactsService.List].
 type ListContactsParams struct {
-	// Depth toggles whether linked addresses are embedded: "1" to include them,
-	// "0" to skip them. Empty defaults to "0".
-	Depth string
+	// IncludePersons, when true, returns both organizations AND persons.
+	// When false (the default), sevdesk returns only organizations — set this
+	// to true to also receive person-type contacts.
+	IncludePersons bool
+	// Category narrows results to contacts of a given category
+	// (e.g. customer, supplier). Use [CategoryRef] to build it.
+	Category *Ref
+	// City matches contacts whose city equals this value.
+	City string
+	// Tags narrows results to contacts carrying ALL of the given tags.
+	Tags []Ref
 	// CustomerNumber matches contacts with this exact customer number.
 	CustomerNumber string
+	// Parent narrows to sub-contacts of the given parent organization.
+	Parent *Ref
+	// Name matches contacts whose name, surename, or familyname equals this value.
+	Name string
+	// Zip matches contacts with this postal code.
+	Zip string
+	// Country matches contacts in the given country. Use [CountryRef].
+	Country *Ref
+	// CreateBefore excludes contacts created at or after this point.
+	CreateBefore time.Time
+	// CreateAfter excludes contacts created at or before this point.
+	CreateAfter time.Time
+	// UpdateBefore excludes contacts last updated at or after this point.
+	UpdateBefore time.Time
+	// UpdateAfter excludes contacts last updated at or before this point.
+	UpdateAfter time.Time
+	// OrderByCustomerNumber sorts results by customer number ascending or
+	// descending. Leave empty for the default order.
+	OrderByCustomerNumber SortDirection
 }
 
 func (p *ListContactsParams) query() url.Values {
@@ -188,11 +226,51 @@ func (p *ListContactsParams) query() url.Values {
 		return nil
 	}
 	q := url.Values{}
-	if p.Depth != "" {
-		q.Set("depth", p.Depth)
+	if p.IncludePersons {
+		q.Set("depth", "1")
+	}
+	if p.Category != nil {
+		q.Set("category[id]", p.Category.ID.String())
+		q.Set("category[objectName]", p.Category.ObjectName)
+	}
+	if p.City != "" {
+		q.Set("city", p.City)
+	}
+	for i, t := range p.Tags {
+		q.Set(fmt.Sprintf("tags[%d][id]", i), t.ID.String())
+		q.Set(fmt.Sprintf("tags[%d][objectName]", i), t.ObjectName)
 	}
 	if p.CustomerNumber != "" {
 		q.Set("customerNumber", p.CustomerNumber)
+	}
+	if p.Parent != nil {
+		q.Set("parent[id]", p.Parent.ID.String())
+		q.Set("parent[objectName]", p.Parent.ObjectName)
+	}
+	if p.Name != "" {
+		q.Set("name", p.Name)
+	}
+	if p.Zip != "" {
+		q.Set("zip", p.Zip)
+	}
+	if p.Country != nil {
+		q.Set("country[id]", p.Country.ID.String())
+		q.Set("country[objectName]", p.Country.ObjectName)
+	}
+	if !p.CreateBefore.IsZero() {
+		q.Set("createBefore", fmt.Sprintf("%d", p.CreateBefore.Unix()))
+	}
+	if !p.CreateAfter.IsZero() {
+		q.Set("createAfter", fmt.Sprintf("%d", p.CreateAfter.Unix()))
+	}
+	if !p.UpdateBefore.IsZero() {
+		q.Set("updateBefore", fmt.Sprintf("%d", p.UpdateBefore.Unix()))
+	}
+	if !p.UpdateAfter.IsZero() {
+		q.Set("updateAfter", fmt.Sprintf("%d", p.UpdateAfter.Unix()))
+	}
+	if p.OrderByCustomerNumber != "" {
+		q.Set("orderByCustomerNumber", string(p.OrderByCustomerNumber))
 	}
 	return q
 }
