@@ -81,11 +81,18 @@ type UpdateCommunicationWayParams struct {
 }
 
 // ListCommunicationWaysParams filters [CommunicationWaysService.List].
+//
+// To look up a contact by email or phone number, set Type and Value here —
+// the returned entries each carry the owning Contact ref. (sevdesk's /Contact
+// endpoint doesn't support filtering by email or phone directly.)
 type ListCommunicationWaysParams struct {
 	// Contact narrows the results to one contact.
 	Contact *Ref
 	// Type filters to one medium. See [CommunicationWayType].
 	Type CommunicationWayType
+	// Value matches the exact email address, phone number, or URL stored on
+	// the communication way.
+	Value string
 	// Main, when "true", returns only main communication ways. Sevdesk wants
 	// a string here, not a boolean.
 	Main string
@@ -102,6 +109,9 @@ func (p *ListCommunicationWaysParams) query() url.Values {
 	}
 	if p.Type != "" {
 		q.Set("type", string(p.Type))
+	}
+	if p.Value != "" {
+		q.Set("value", p.Value)
 	}
 	if p.Main != "" {
 		q.Set("main", p.Main)
