@@ -3,6 +3,7 @@ package sevdesk
 import (
 	"context"
 	"fmt"
+	"iter"
 	"net/http"
 	"net/url"
 	"time"
@@ -137,12 +138,8 @@ func (p *ListPartsParams) query() url.Values {
 }
 
 // List returns parts matching the given filter.
-func (s *PartsService) List(ctx context.Context, opts *ListPartsParams) ([]Part, error) {
-	raw, err := s.c.do(ctx, http.MethodGet, "/Part", opts.query(), nil)
-	if err != nil {
-		return nil, err
-	}
-	return decodeList[Part](raw)
+func (s *PartsService) List(ctx context.Context, opts *ListPartsParams) iter.Seq2[Part, error] {
+	return listIter[Part](ctx, s.c, "/Part", opts.query())
 }
 
 // Get returns the part with the given id.

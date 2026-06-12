@@ -3,6 +3,7 @@ package sevdesk
 import (
 	"context"
 	"fmt"
+	"iter"
 	"net/http"
 	"net/url"
 	"time"
@@ -373,12 +374,8 @@ func (p *ListInvoicesParams) query() url.Values {
 }
 
 // List returns invoices matching the given filter.
-func (s *InvoicesService) List(ctx context.Context, opts *ListInvoicesParams) ([]Invoice, error) {
-	raw, err := s.c.do(ctx, http.MethodGet, "/Invoice", opts.query(), nil)
-	if err != nil {
-		return nil, err
-	}
-	return decodeList[Invoice](raw)
+func (s *InvoicesService) List(ctx context.Context, opts *ListInvoicesParams) iter.Seq2[Invoice, error] {
+	return listIter[Invoice](ctx, s.c, "/Invoice", opts.query())
 }
 
 // Get returns the invoice with the given id.
@@ -419,12 +416,8 @@ func (o *GetPositionsOptions) query() url.Values {
 }
 
 // GetPositions returns the positions of the given invoice.
-func (s *InvoicesService) GetPositions(ctx context.Context, id ID, opts *GetPositionsOptions) ([]InvoicePos, error) {
-	raw, err := s.c.do(ctx, http.MethodGet, fmt.Sprintf("/Invoice/%d/getPositions", id), opts.query(), nil)
-	if err != nil {
-		return nil, err
-	}
-	return decodeList[InvoicePos](raw)
+func (s *InvoicesService) GetPositions(ctx context.Context, id ID, opts *GetPositionsOptions) iter.Seq2[InvoicePos, error] {
+	return listIter[InvoicePos](ctx, s.c, fmt.Sprintf("/Invoice/%d/getPositions", id), opts.query())
 }
 
 // CreateInvoiceResult is the return value of [InvoicesService.Create].
@@ -818,10 +811,6 @@ func (p *ListInvoicePositionsParams) query() url.Values {
 
 // ListPositions returns invoice positions across invoices (use Invoice filter
 // for a single invoice; [InvoicesService.GetPositions] is usually nicer).
-func (s *InvoicesService) ListPositions(ctx context.Context, opts *ListInvoicePositionsParams) ([]InvoicePos, error) {
-	raw, err := s.c.do(ctx, http.MethodGet, "/InvoicePos", opts.query(), nil)
-	if err != nil {
-		return nil, err
-	}
-	return decodeList[InvoicePos](raw)
+func (s *InvoicesService) ListPositions(ctx context.Context, opts *ListInvoicePositionsParams) iter.Seq2[InvoicePos, error] {
+	return listIter[InvoicePos](ctx, s.c, "/InvoicePos", opts.query())
 }

@@ -3,6 +3,7 @@ package sevdesk
 import (
 	"context"
 	"fmt"
+	"iter"
 	"net/http"
 	"net/url"
 	"time"
@@ -283,12 +284,8 @@ func (p *ListOrdersParams) query() url.Values {
 }
 
 // List returns orders matching the filter.
-func (s *OrdersService) List(ctx context.Context, opts *ListOrdersParams) ([]Order, error) {
-	raw, err := s.c.do(ctx, http.MethodGet, "/Order", opts.query(), nil)
-	if err != nil {
-		return nil, err
-	}
-	return decodeList[Order](raw)
+func (s *OrdersService) List(ctx context.Context, opts *ListOrdersParams) iter.Seq2[Order, error] {
+	return listIter[Order](ctx, s.c, "/Order", opts.query())
 }
 
 // Get returns the order with the given id.
@@ -343,21 +340,13 @@ func (s *OrdersService) Delete(ctx context.Context, id ID) error {
 }
 
 // GetPositions returns the positions of the given order.
-func (s *OrdersService) GetPositions(ctx context.Context, id ID, opts *GetPositionsOptions) ([]OrderPos, error) {
-	raw, err := s.c.do(ctx, http.MethodGet, fmt.Sprintf("/Order/%d/getPositions", id), opts.query(), nil)
-	if err != nil {
-		return nil, err
-	}
-	return decodeList[OrderPos](raw)
+func (s *OrdersService) GetPositions(ctx context.Context, id ID, opts *GetPositionsOptions) iter.Seq2[OrderPos, error] {
+	return listIter[OrderPos](ctx, s.c, fmt.Sprintf("/Order/%d/getPositions", id), opts.query())
 }
 
 // GetDiscounts returns the discounts attached to the given order.
-func (s *OrdersService) GetDiscounts(ctx context.Context, id ID, opts *GetPositionsOptions) ([]Discount, error) {
-	raw, err := s.c.do(ctx, http.MethodGet, fmt.Sprintf("/Order/%d/getDiscounts", id), opts.query(), nil)
-	if err != nil {
-		return nil, err
-	}
-	return decodeList[Discount](raw)
+func (s *OrdersService) GetDiscounts(ctx context.Context, id ID, opts *GetPositionsOptions) iter.Seq2[Discount, error] {
+	return listIter[Discount](ctx, s.c, fmt.Sprintf("/Order/%d/getDiscounts", id), opts.query())
 }
 
 // RelatedObjectsOptions configures [OrdersService.GetRelatedObjects].
@@ -389,12 +378,8 @@ func (o *RelatedObjectsOptions) query() url.Values {
 
 // GetRelatedObjects returns objects (invoices, packing lists, etc.) derived
 // from the given order.
-func (s *OrdersService) GetRelatedObjects(ctx context.Context, id ID, opts *RelatedObjectsOptions) ([]Ref, error) {
-	raw, err := s.c.do(ctx, http.MethodGet, fmt.Sprintf("/Order/%d/getRelatedObjects", id), opts.query(), nil)
-	if err != nil {
-		return nil, err
-	}
-	return decodeList[Ref](raw)
+func (s *OrdersService) GetRelatedObjects(ctx context.Context, id ID, opts *RelatedObjectsOptions) iter.Seq2[Ref, error] {
+	return listIter[Ref](ctx, s.c, fmt.Sprintf("/Order/%d/getRelatedObjects", id), opts.query())
 }
 
 // SendViaEmail sends an order by email.
@@ -472,7 +457,7 @@ type OrderPositionsService struct {
 }
 
 // List returns order positions filtered by the given order.
-func (s *OrderPositionsService) List(ctx context.Context, order *Ref) ([]OrderPos, error) {
+func (s *OrderPositionsService) List(ctx context.Context, order *Ref) iter.Seq2[OrderPos, error] {
 	var q url.Values
 	if order != nil {
 		q = url.Values{
@@ -480,11 +465,7 @@ func (s *OrderPositionsService) List(ctx context.Context, order *Ref) ([]OrderPo
 			"order[objectName]": {order.ObjectName},
 		}
 	}
-	raw, err := s.c.do(ctx, http.MethodGet, "/OrderPos", q, nil)
-	if err != nil {
-		return nil, err
-	}
-	return decodeList[OrderPos](raw)
+	return listIter[OrderPos](ctx, s.c, "/OrderPos", q)
 }
 
 // Get returns the order position with the given id.

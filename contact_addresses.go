@@ -3,6 +3,7 @@ package sevdesk
 import (
 	"context"
 	"fmt"
+	"iter"
 	"net/http"
 	"time"
 )
@@ -59,12 +60,8 @@ type CreateContactAddressParams struct {
 type UpdateContactAddressParams = CreateContactAddressParams
 
 // List returns all contact addresses.
-func (s *ContactAddressesService) List(ctx context.Context) ([]ContactAddress, error) {
-	raw, err := s.c.do(ctx, http.MethodGet, "/ContactAddress", nil, nil)
-	if err != nil {
-		return nil, err
-	}
-	return decodeList[ContactAddress](raw)
+func (s *ContactAddressesService) List(ctx context.Context) iter.Seq2[ContactAddress, error] {
+	return listIter[ContactAddress](ctx, s.c, "/ContactAddress", nil)
 }
 
 // Get returns the contact address with the given id.

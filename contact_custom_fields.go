@@ -3,6 +3,7 @@ package sevdesk
 import (
 	"context"
 	"fmt"
+	"iter"
 	"net/http"
 	"time"
 )
@@ -45,12 +46,8 @@ type UpdateContactCustomFieldParams struct {
 }
 
 // List returns all contact custom field instances.
-func (s *ContactCustomFieldsService) List(ctx context.Context) ([]ContactCustomField, error) {
-	raw, err := s.c.do(ctx, http.MethodGet, "/ContactCustomField", nil, nil)
-	if err != nil {
-		return nil, err
-	}
-	return decodeList[ContactCustomField](raw)
+func (s *ContactCustomFieldsService) List(ctx context.Context) iter.Seq2[ContactCustomField, error] {
+	return listIter[ContactCustomField](ctx, s.c, "/ContactCustomField", nil)
 }
 
 // Get returns the contact custom field with the given id.
@@ -120,12 +117,8 @@ type UpdateContactCustomFieldSettingParams struct {
 }
 
 // List returns all contact custom field settings.
-func (s *ContactCustomFieldSettingsService) List(ctx context.Context) ([]ContactCustomFieldSetting, error) {
-	raw, err := s.c.do(ctx, http.MethodGet, "/ContactCustomFieldSetting", nil, nil)
-	if err != nil {
-		return nil, err
-	}
-	return decodeList[ContactCustomFieldSetting](raw)
+func (s *ContactCustomFieldSettingsService) List(ctx context.Context) iter.Seq2[ContactCustomFieldSetting, error] {
+	return listIter[ContactCustomFieldSetting](ctx, s.c, "/ContactCustomFieldSetting", nil)
 }
 
 // Get returns the contact custom field setting with the given id.

@@ -3,7 +3,7 @@ package sevdesk
 import (
 	"context"
 	"fmt"
-	"net/http"
+	"iter"
 	"net/url"
 )
 
@@ -47,50 +47,30 @@ type ReceiptGuideTaxRule struct {
 }
 
 // ForAllAccounts returns guidance for every available DATEV account.
-func (s *ReceiptGuidanceService) ForAllAccounts(ctx context.Context) ([]ReceiptGuide, error) {
-	raw, err := s.c.do(ctx, http.MethodGet, "/ReceiptGuidance/forAllAccounts", nil, nil)
-	if err != nil {
-		return nil, err
-	}
-	return decodeList[ReceiptGuide](raw)
+func (s *ReceiptGuidanceService) ForAllAccounts(ctx context.Context) iter.Seq2[ReceiptGuide, error] {
+	return listIter[ReceiptGuide](ctx, s.c, "/ReceiptGuidance/forAllAccounts", nil)
 }
 
 // ForAccountNumber returns guidance for a specific DATEV account number
 // (e.g. 8400 for "Erlöse 19% USt").
-func (s *ReceiptGuidanceService) ForAccountNumber(ctx context.Context, accountNumber int) ([]ReceiptGuide, error) {
+func (s *ReceiptGuidanceService) ForAccountNumber(ctx context.Context, accountNumber int) iter.Seq2[ReceiptGuide, error] {
 	q := url.Values{"accountNumber": {fmt.Sprintf("%d", accountNumber)}}
-	raw, err := s.c.do(ctx, http.MethodGet, "/ReceiptGuidance/forAccountNumber", q, nil)
-	if err != nil {
-		return nil, err
-	}
-	return decodeList[ReceiptGuide](raw)
+	return listIter[ReceiptGuide](ctx, s.c, "/ReceiptGuidance/forAccountNumber", q)
 }
 
 // ForTaxRule returns accounts compatible with the given tax-rule name
 // (e.g. "USTPFL_UMS_EINN").
-func (s *ReceiptGuidanceService) ForTaxRule(ctx context.Context, taxRule string) ([]ReceiptGuide, error) {
+func (s *ReceiptGuidanceService) ForTaxRule(ctx context.Context, taxRule string) iter.Seq2[ReceiptGuide, error] {
 	q := url.Values{"taxRule": {taxRule}}
-	raw, err := s.c.do(ctx, http.MethodGet, "/ReceiptGuidance/forTaxRule", q, nil)
-	if err != nil {
-		return nil, err
-	}
-	return decodeList[ReceiptGuide](raw)
+	return listIter[ReceiptGuide](ctx, s.c, "/ReceiptGuidance/forTaxRule", q)
 }
 
 // ForRevenue returns guidance for all revenue (income) accounts.
-func (s *ReceiptGuidanceService) ForRevenue(ctx context.Context) ([]ReceiptGuide, error) {
-	raw, err := s.c.do(ctx, http.MethodGet, "/ReceiptGuidance/forRevenue", nil, nil)
-	if err != nil {
-		return nil, err
-	}
-	return decodeList[ReceiptGuide](raw)
+func (s *ReceiptGuidanceService) ForRevenue(ctx context.Context) iter.Seq2[ReceiptGuide, error] {
+	return listIter[ReceiptGuide](ctx, s.c, "/ReceiptGuidance/forRevenue", nil)
 }
 
 // ForExpense returns guidance for all expense accounts.
-func (s *ReceiptGuidanceService) ForExpense(ctx context.Context) ([]ReceiptGuide, error) {
-	raw, err := s.c.do(ctx, http.MethodGet, "/ReceiptGuidance/forExpense", nil, nil)
-	if err != nil {
-		return nil, err
-	}
-	return decodeList[ReceiptGuide](raw)
+func (s *ReceiptGuidanceService) ForExpense(ctx context.Context) iter.Seq2[ReceiptGuide, error] {
+	return listIter[ReceiptGuide](ctx, s.c, "/ReceiptGuidance/forExpense", nil)
 }

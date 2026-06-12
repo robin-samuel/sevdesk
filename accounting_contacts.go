@@ -3,6 +3,7 @@ package sevdesk
 import (
 	"context"
 	"fmt"
+	"iter"
 	"net/http"
 	"net/url"
 	"time"
@@ -42,8 +43,8 @@ type CreateAccountingContactParams struct {
 // See [CreateAccountingContactParams] for field semantics.
 type UpdateAccountingContactParams = CreateAccountingContactParams
 
-// List returns accounting contacts; pass contact filter to scope.
-func (s *AccountingContactsService) List(ctx context.Context, contact *Ref) ([]AccountingContact, error) {
+// List returns accounting contacts; pass a contact filter to scope.
+func (s *AccountingContactsService) List(ctx context.Context, contact *Ref) iter.Seq2[AccountingContact, error] {
 	var q url.Values
 	if contact != nil {
 		q = url.Values{
@@ -51,11 +52,7 @@ func (s *AccountingContactsService) List(ctx context.Context, contact *Ref) ([]A
 			"contact[objectName]": {contact.ObjectName},
 		}
 	}
-	raw, err := s.c.do(ctx, http.MethodGet, "/AccountingContact", q, nil)
-	if err != nil {
-		return nil, err
-	}
-	return decodeList[AccountingContact](raw)
+	return listIter[AccountingContact](ctx, s.c, "/AccountingContact", q)
 }
 
 // Get returns the accounting contact with the given id.

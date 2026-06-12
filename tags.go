@@ -3,6 +3,7 @@ package sevdesk
 import (
 	"context"
 	"fmt"
+	"iter"
 	"net/http"
 	"net/url"
 	"time"
@@ -65,12 +66,8 @@ func (p *ListTagsParams) query() url.Values {
 }
 
 // List returns tags matching the filter.
-func (s *TagsService) List(ctx context.Context, opts *ListTagsParams) ([]Tag, error) {
-	raw, err := s.c.do(ctx, http.MethodGet, "/Tag", opts.query(), nil)
-	if err != nil {
-		return nil, err
-	}
-	return decodeList[Tag](raw)
+func (s *TagsService) List(ctx context.Context, opts *ListTagsParams) iter.Seq2[Tag, error] {
+	return listIter[Tag](ctx, s.c, "/Tag", opts.query())
 }
 
 // Get returns the tag with the given id.
@@ -108,10 +105,6 @@ func (s *TagsService) Delete(ctx context.Context, id ID) error {
 }
 
 // Relations returns all tag-to-object relations across the account.
-func (s *TagsService) Relations(ctx context.Context) ([]TagRelation, error) {
-	raw, err := s.c.do(ctx, http.MethodGet, "/TagRelation", nil, nil)
-	if err != nil {
-		return nil, err
-	}
-	return decodeList[TagRelation](raw)
+func (s *TagsService) Relations(ctx context.Context) iter.Seq2[TagRelation, error] {
+	return listIter[TagRelation](ctx, s.c, "/TagRelation", nil)
 }

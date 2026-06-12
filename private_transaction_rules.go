@@ -3,6 +3,7 @@ package sevdesk
 import (
 	"context"
 	"fmt"
+	"iter"
 	"net/http"
 	"time"
 )
@@ -39,12 +40,8 @@ type CreatePrivateTransactionRuleParams struct {
 }
 
 // List returns all private transaction rules.
-func (s *PrivateTransactionRulesService) List(ctx context.Context) ([]PrivateTransactionRule, error) {
-	raw, err := s.c.do(ctx, http.MethodGet, "/PrivateTransactionRule", nil, nil)
-	if err != nil {
-		return nil, err
-	}
-	return decodeList[PrivateTransactionRule](raw)
+func (s *PrivateTransactionRulesService) List(ctx context.Context) iter.Seq2[PrivateTransactionRule, error] {
+	return listIter[PrivateTransactionRule](ctx, s.c, "/PrivateTransactionRule", nil)
 }
 
 // Create creates a new private transaction rule.

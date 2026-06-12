@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"iter"
 	"net/http"
 	"net/url"
 	"time"
@@ -275,13 +276,9 @@ func (p *ListContactsParams) query() url.Values {
 	return q
 }
 
-// List returns all contacts matching the given filter.
-func (s *ContactsService) List(ctx context.Context, opts *ListContactsParams) ([]Contact, error) {
-	raw, err := s.c.do(ctx, http.MethodGet, "/Contact", opts.query(), nil)
-	if err != nil {
-		return nil, err
-	}
-	return decodeList[Contact](raw)
+// List returns contacts matching the given filter.
+func (s *ContactsService) List(ctx context.Context, opts *ListContactsParams) iter.Seq2[Contact, error] {
+	return listIter[Contact](ctx, s.c, "/Contact", opts.query())
 }
 
 // Get returns the contact with the given id.
@@ -374,7 +371,7 @@ func (s *ContactsService) CustomerNumberAvailable(ctx context.Context, number st
 // FindByCustomFieldValue returns contacts whose custom field matches value.
 // fieldSetting is the Ref to the ContactCustomFieldSetting; fieldName is
 // optional and may be empty.
-func (s *ContactsService) FindByCustomFieldValue(ctx context.Context, value string, fieldSetting Ref, fieldName string) ([]Contact, error) {
+func (s *ContactsService) FindByCustomFieldValue(ctx context.Context, value string, fieldSetting Ref, fieldName string) iter.Seq2[Contact, error] {
 	q := url.Values{
 		"value":                          {value},
 		"customFieldSetting[id]":         {fieldSetting.ID.String()},
@@ -383,9 +380,5 @@ func (s *ContactsService) FindByCustomFieldValue(ctx context.Context, value stri
 	if fieldName != "" {
 		q.Set("customFieldName", fieldName)
 	}
-	raw, err := s.c.do(ctx, http.MethodGet, "/Contact/Factory/findContactsByCustomFieldValue", q, nil)
-	if err != nil {
-		return nil, err
-	}
-	return decodeList[Contact](raw)
+	return listIter[Contact](ctx, s.c, "/Contact/Factory/findContactsByCustomFieldValue", q)
 }

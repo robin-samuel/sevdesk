@@ -3,6 +3,7 @@ package sevdesk
 import (
 	"context"
 	"fmt"
+	"iter"
 	"net/http"
 	"time"
 )
@@ -50,12 +51,8 @@ type AccountingType struct {
 }
 
 // List returns all AccountingType records.
-func (s *AccountingTypesService) List(ctx context.Context) ([]AccountingType, error) {
-	raw, err := s.c.do(ctx, http.MethodGet, "/AccountingType", nil, nil)
-	if err != nil {
-		return nil, err
-	}
-	return decodeList[AccountingType](raw)
+func (s *AccountingTypesService) List(ctx context.Context) iter.Seq2[AccountingType, error] {
+	return listIter[AccountingType](ctx, s.c, "/AccountingType", nil)
 }
 
 // Get returns the AccountingType with the given id.

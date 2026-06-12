@@ -3,6 +3,7 @@ package sevdesk
 import (
 	"context"
 	"fmt"
+	"iter"
 	"net/http"
 	"net/url"
 	"time"
@@ -325,12 +326,8 @@ func (p *ListCreditNotesParams) query() url.Values {
 }
 
 // List returns credit notes matching the given filter.
-func (s *CreditNotesService) List(ctx context.Context, opts *ListCreditNotesParams) ([]CreditNote, error) {
-	raw, err := s.c.do(ctx, http.MethodGet, "/CreditNote", opts.query(), nil)
-	if err != nil {
-		return nil, err
-	}
-	return decodeList[CreditNote](raw)
+func (s *CreditNotesService) List(ctx context.Context, opts *ListCreditNotesParams) iter.Seq2[CreditNote, error] {
+	return listIter[CreditNote](ctx, s.c, "/CreditNote", opts.query())
 }
 
 // Get returns the credit note with the given id.
@@ -508,14 +505,10 @@ func (s *CreditNotesService) ChangeLayout(ctx context.Context, id ID, params *Ch
 }
 
 // ListPositions returns credit note positions; filter by credit note via Params.
-func (s *CreditNotesService) ListPositions(ctx context.Context, creditNoteID ID) ([]CreditNotePos, error) {
+func (s *CreditNotesService) ListPositions(ctx context.Context, creditNoteID ID) iter.Seq2[CreditNotePos, error] {
 	q := url.Values{
 		"creditNote[id]":         {creditNoteID.String()},
 		"creditNote[objectName]": {ObjectCreditNote},
 	}
-	raw, err := s.c.do(ctx, http.MethodGet, "/CreditNotePos", q, nil)
-	if err != nil {
-		return nil, err
-	}
-	return decodeList[CreditNotePos](raw)
+	return listIter[CreditNotePos](ctx, s.c, "/CreditNotePos", q)
 }

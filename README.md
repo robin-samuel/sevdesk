@@ -78,9 +78,18 @@ _, err := c.Contacts.Create(ctx, &sevdesk.CreateContactParams{
 For typed enums there's a constant for every documented value (and they're typed, so the compiler catches mismatches):
 
 ```go
-invoices, _ := c.Invoices.List(ctx, &sevdesk.ListInvoicesParams{
+for invoice, err := range c.Invoices.List(ctx, &sevdesk.ListInvoicesParams{
 	Status: sevdesk.InvoiceStatusOpen,
-})
+}) {
+	if err != nil { return err }
+	// ...
+}
+```
+
+List endpoints return `iter.Seq2[T, error]` and paginate automatically. Drain into a slice with [`sevdesk.Collect`](https://pkg.go.dev/github.com/robin-samuel/sevdesk#Collect):
+
+```go
+invoices, err := sevdesk.Collect(c.Invoices.List(ctx, nil))
 ```
 
 ## Wire-format quirks

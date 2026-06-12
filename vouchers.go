@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"iter"
 	"mime/multipart"
 	"net/http"
 	"net/url"
@@ -333,12 +334,8 @@ const (
 )
 
 // List returns vouchers matching the given filter.
-func (s *VouchersService) List(ctx context.Context, opts *ListVouchersParams) ([]Voucher, error) {
-	raw, err := s.c.do(ctx, http.MethodGet, "/Voucher", opts.query(), nil)
-	if err != nil {
-		return nil, err
-	}
-	return decodeList[Voucher](raw)
+func (s *VouchersService) List(ctx context.Context, opts *ListVouchersParams) iter.Seq2[Voucher, error] {
+	return listIter[Voucher](ctx, s.c, "/Voucher", opts.query())
 }
 
 // Get returns the voucher with the given id.
@@ -520,14 +517,10 @@ type VoucherPos struct {
 }
 
 // Positions returns the positions of the given voucher.
-func (s *VouchersService) Positions(ctx context.Context, voucherID ID) ([]VoucherPos, error) {
+func (s *VouchersService) Positions(ctx context.Context, voucherID ID) iter.Seq2[VoucherPos, error] {
 	q := url.Values{
 		"voucher[id]":         {voucherID.String()},
 		"voucher[objectName]": {ObjectVoucher},
 	}
-	raw, err := s.c.do(ctx, http.MethodGet, "/VoucherPos", q, nil)
-	if err != nil {
-		return nil, err
-	}
-	return decodeList[VoucherPos](raw)
+	return listIter[VoucherPos](ctx, s.c, "/VoucherPos", q)
 }

@@ -3,6 +3,7 @@ package sevdesk
 import (
 	"context"
 	"fmt"
+	"iter"
 	"net/http"
 	"net/url"
 	"time"
@@ -120,12 +121,8 @@ func (p *ListCommunicationWaysParams) query() url.Values {
 }
 
 // List returns communication ways matching the filter.
-func (s *CommunicationWaysService) List(ctx context.Context, opts *ListCommunicationWaysParams) ([]CommunicationWay, error) {
-	raw, err := s.c.do(ctx, http.MethodGet, "/CommunicationWay", opts.query(), nil)
-	if err != nil {
-		return nil, err
-	}
-	return decodeList[CommunicationWay](raw)
+func (s *CommunicationWaysService) List(ctx context.Context, opts *ListCommunicationWaysParams) iter.Seq2[CommunicationWay, error] {
+	return listIter[CommunicationWay](ctx, s.c, "/CommunicationWay", opts.query())
 }
 
 // Get returns the communication way with the given id.
@@ -162,10 +159,6 @@ func (s *CommunicationWaysService) Delete(ctx context.Context, id ID) error {
 }
 
 // Keys returns all available communication way keys (labels like "Work", "Private").
-func (s *CommunicationWaysService) Keys(ctx context.Context) ([]CommunicationWayKey, error) {
-	raw, err := s.c.do(ctx, http.MethodGet, "/CommunicationWayKey", nil, nil)
-	if err != nil {
-		return nil, err
-	}
-	return decodeList[CommunicationWayKey](raw)
+func (s *CommunicationWaysService) Keys(ctx context.Context) iter.Seq2[CommunicationWayKey, error] {
+	return listIter[CommunicationWayKey](ctx, s.c, "/CommunicationWayKey", nil)
 }

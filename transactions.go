@@ -3,6 +3,7 @@ package sevdesk
 import (
 	"context"
 	"fmt"
+	"iter"
 	"net/http"
 	"net/url"
 	"time"
@@ -172,12 +173,8 @@ func boolStr(b bool) string {
 }
 
 // List returns transactions matching the given filter.
-func (s *TransactionsService) List(ctx context.Context, opts *ListTransactionsParams) ([]Transaction, error) {
-	raw, err := s.c.do(ctx, http.MethodGet, "/CheckAccountTransaction", opts.query(), nil)
-	if err != nil {
-		return nil, err
-	}
-	return decodeList[Transaction](raw)
+func (s *TransactionsService) List(ctx context.Context, opts *ListTransactionsParams) iter.Seq2[Transaction, error] {
+	return listIter[Transaction](ctx, s.c, "/CheckAccountTransaction", opts.query())
 }
 
 // Get returns the transaction with the given id.

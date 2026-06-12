@@ -3,6 +3,7 @@ package sevdesk
 import (
 	"context"
 	"fmt"
+	"iter"
 	"net/http"
 	"net/url"
 	"time"
@@ -132,12 +133,8 @@ type UpdateCheckAccountParams struct {
 }
 
 // List returns all check accounts.
-func (s *CheckAccountsService) List(ctx context.Context) ([]CheckAccount, error) {
-	raw, err := s.c.do(ctx, http.MethodGet, "/CheckAccount", nil, nil)
-	if err != nil {
-		return nil, err
-	}
-	return decodeList[CheckAccount](raw)
+func (s *CheckAccountsService) List(ctx context.Context) iter.Seq2[CheckAccount, error] {
+	return listIter[CheckAccount](ctx, s.c, "/CheckAccount", nil)
 }
 
 // Get returns the check account with the given id.
