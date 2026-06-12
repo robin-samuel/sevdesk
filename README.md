@@ -92,6 +92,7 @@ sevdesk's responses have some sharp edges. The SDK papers over them so your Go c
 - **Booleans arrive as `"0"` / `"1"`** (and sometimes `"true"` / `"false"`) — exposed as `sevdesk.Bool`. Use the package-level `sevdesk.True` / `sevdesk.False` as `*Bool` params.
 - **Related entities use `{id, objectName}` pairs everywhere** — exposed as `sevdesk.Ref`. Use the typed helpers: `sevdesk.ContactRef(id)`, `sevdesk.InvoiceRef(id)`, etc.
 - **All responses are wrapped in `{"objects": ...}`** — unwrapped automatically.
+- **Country references are pre-built**: `sevdesk.CountryDE`, `sevdesk.CountryUS`, `sevdesk.CountryGB`, … one per ISO 3166-1 alpha-2 code, ready to drop into any `*Ref` field.
 
 ## Authentication
 
