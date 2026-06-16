@@ -160,7 +160,7 @@ type VoucherCreateFields struct {
 	MapAll     bool   `json:"mapAll"`     // set by Create
 
 	// Status of the voucher. See [VoucherStatus].
-	Status *VoucherStatus `json:"status,omitempty"`
+	Status VoucherStatus `json:"status,omitempty"`
 	// TaxType controls how VAT is applied. Common values: "default", "eu",
 	// "noteu", "custom", "ss" (Kleinunternehmer).
 	TaxType *string `json:"taxType,omitempty"`
@@ -228,23 +228,23 @@ type VoucherPosCreate struct {
 // UpdateVoucherParams is the body for [VouchersService.Update].
 // See [VoucherCreateFields] for field semantics.
 type UpdateVoucherParams struct {
-	VoucherDate       *time.Time     `json:"voucherDate,omitempty"`
-	Supplier          *Ref           `json:"supplier,omitempty"`
-	SupplierName      *string        `json:"supplierName,omitempty"`
-	Description       *string        `json:"description,omitempty"`
-	PayDate           *time.Time     `json:"payDate,omitempty"`
-	Status            *VoucherStatus `json:"status,omitempty"`
-	PaidAmount        *Decimal       `json:"paidAmount,omitempty"`
-	TaxType           *string        `json:"taxType,omitempty"`
-	TaxRule           *Ref           `json:"taxRule,omitempty"`
-	CreditDebit       *CreditDebit   `json:"creditDebit,omitempty"`
-	VoucherType       *VoucherType   `json:"voucherType,omitempty"`
-	Currency          *string        `json:"currency,omitempty"`
-	PaymentDeadline   *time.Time     `json:"paymentDeadline,omitempty"`
-	DeliveryDate      *time.Time     `json:"deliveryDate,omitempty"`
-	DeliveryDateUntil *time.Time     `json:"deliveryDateUntil,omitempty"`
-	Document          *Ref           `json:"document,omitempty"`
-	CostCentre        *Ref           `json:"costCentre,omitempty"`
+	VoucherDate       *time.Time    `json:"voucherDate,omitempty"`
+	Supplier          *Ref          `json:"supplier,omitempty"`
+	SupplierName      *string       `json:"supplierName,omitempty"`
+	Description       *string       `json:"description,omitempty"`
+	PayDate           *time.Time    `json:"payDate,omitempty"`
+	Status            VoucherStatus `json:"status,omitempty"`
+	PaidAmount        *Decimal      `json:"paidAmount,omitempty"`
+	TaxType           *string       `json:"taxType,omitempty"`
+	TaxRule           *Ref          `json:"taxRule,omitempty"`
+	CreditDebit       *CreditDebit  `json:"creditDebit,omitempty"`
+	VoucherType       *VoucherType  `json:"voucherType,omitempty"`
+	Currency          *string       `json:"currency,omitempty"`
+	PaymentDeadline   *time.Time    `json:"paymentDeadline,omitempty"`
+	DeliveryDate      *time.Time    `json:"deliveryDate,omitempty"`
+	DeliveryDateUntil *time.Time    `json:"deliveryDateUntil,omitempty"`
+	Document          *Ref          `json:"document,omitempty"`
+	CostCentre        *Ref          `json:"costCentre,omitempty"`
 
 	PropertyExchangeRate            *Decimal   `json:"propertyExchangeRate,omitempty"`
 	PropertyForeignCurrencyDeadline *time.Time `json:"propertyForeignCurrencyDeadline,omitempty"`

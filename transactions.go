@@ -93,19 +93,19 @@ type CreateTransactionParams struct {
 	// CheckAccount the transaction belongs to. Required.
 	CheckAccount *Ref `json:"checkAccount"`
 	// Status of the transaction. See [TransactionStatusCreated] and adjacent.
-	Status *TransactionStatus `json:"status,omitempty"`
+	Status TransactionStatus `json:"status,omitempty"`
 }
 
 // UpdateTransactionParams is the body for [TransactionsService.Update].
 // See [CreateTransactionParams] for field semantics.
 type UpdateTransactionParams struct {
-	ValueDate      *time.Time         `json:"valueDate,omitempty"`
-	EntryDate      *time.Time         `json:"entryDate,omitempty"`
-	Amount         *Decimal           `json:"amount,omitempty"`
-	PaymtPurpose   *string            `json:"paymtPurpose,omitempty"`
-	PayeePayerName *string            `json:"payeePayerName,omitempty"`
-	CheckAccount   *Ref               `json:"checkAccount,omitempty"`
-	Status         *TransactionStatus `json:"status,omitempty"`
+	ValueDate      *time.Time        `json:"valueDate,omitempty"`
+	EntryDate      *time.Time        `json:"entryDate,omitempty"`
+	Amount         *Decimal          `json:"amount,omitempty"`
+	PaymtPurpose   *string           `json:"paymtPurpose,omitempty"`
+	PayeePayerName *string           `json:"payeePayerName,omitempty"`
+	CheckAccount   *Ref              `json:"checkAccount,omitempty"`
+	Status         TransactionStatus `json:"status,omitempty"`
 	// SourceTransaction links this transaction as the source of a rebooking.
 	SourceTransaction *Ref `json:"sourceTransaction,omitempty"`
 	// TargetTransaction links this transaction as the target of a rebooking.

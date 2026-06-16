@@ -91,7 +91,7 @@ type CreatePartParams struct {
 	// PricePurchase is the purchase price.
 	PricePurchase *Decimal `json:"pricePurchase,omitempty"`
 	// Status of the part. See [PartStatusActive] and adjacent.
-	Status *PartStatus `json:"status,omitempty"`
+	Status PartStatus `json:"status,omitempty"`
 	// InternalComment is a private note (not shown to customers).
 	InternalComment *string `json:"internalComment,omitempty"`
 }
@@ -99,20 +99,20 @@ type CreatePartParams struct {
 // UpdatePartParams is the body for [PartsService.Update].
 // See [CreatePartParams] for field semantics.
 type UpdatePartParams struct {
-	Name            *string     `json:"name,omitempty"`
-	PartNumber      *string     `json:"partNumber,omitempty"`
-	Text            *string     `json:"text,omitempty"`
-	Category        *Ref        `json:"category,omitempty"`
-	Stock           *Decimal    `json:"stock,omitempty"`
-	StockEnabled    *Bool       `json:"stockEnabled,omitempty"`
-	Unity           *Ref        `json:"unity,omitempty"`
-	Price           *Decimal    `json:"price,omitempty"`
-	PriceNet        *Decimal    `json:"priceNet,omitempty"`
-	PriceGross      *Decimal    `json:"priceGross,omitempty"`
-	PricePurchase   *Decimal    `json:"pricePurchase,omitempty"`
-	TaxRate         *Decimal    `json:"taxRate,omitempty"`
-	Status          *PartStatus `json:"status,omitempty"`
-	InternalComment *string     `json:"internalComment,omitempty"`
+	Name            *string    `json:"name,omitempty"`
+	PartNumber      *string    `json:"partNumber,omitempty"`
+	Text            *string    `json:"text,omitempty"`
+	Category        *Ref       `json:"category,omitempty"`
+	Stock           *Decimal   `json:"stock,omitempty"`
+	StockEnabled    *Bool      `json:"stockEnabled,omitempty"`
+	Unity           *Ref       `json:"unity,omitempty"`
+	Price           *Decimal   `json:"price,omitempty"`
+	PriceNet        *Decimal   `json:"priceNet,omitempty"`
+	PriceGross      *Decimal   `json:"priceGross,omitempty"`
+	PricePurchase   *Decimal   `json:"pricePurchase,omitempty"`
+	TaxRate         *Decimal   `json:"taxRate,omitempty"`
+	Status          PartStatus `json:"status,omitempty"`
+	InternalComment *string    `json:"internalComment,omitempty"`
 }
 
 // ListPartsParams filters [PartsService.List].

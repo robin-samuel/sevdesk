@@ -89,7 +89,7 @@ type CreateContactParams struct {
 	// organization; for a person, leave empty and set Surename + Familyname.
 	Name *string `json:"name,omitempty"`
 	// Status controls the contact's lifecycle stage. See [ContactStatus].
-	Status *ContactStatus `json:"status,omitempty"`
+	Status ContactStatus `json:"status,omitempty"`
 	// CustomerNumber is the unique reference shown to the customer.
 	// Auto-assigned if omitted.
 	CustomerNumber *string `json:"customerNumber,omitempty"`
@@ -146,22 +146,22 @@ type CreateContactParams struct {
 // UpdateContactParams is the request body for [ContactsService.Update]. Any
 // omitted field is left unchanged. See [CreateContactParams] for field semantics.
 type UpdateContactParams struct {
-	Name           *string        `json:"name,omitempty"`
-	Status         *ContactStatus `json:"status,omitempty"`
-	CustomerNumber *string        `json:"customerNumber,omitempty"`
-	Parent         *Ref           `json:"parent,omitempty"`
-	Surename       *string        `json:"surename,omitempty"`
-	Familyname     *string        `json:"familyname,omitempty"`
-	Titel          *string        `json:"titel,omitempty"`
-	Category       *Ref           `json:"category,omitempty"`
-	Description    *string        `json:"description,omitempty"`
-	AcademicTitle  *string        `json:"academicTitle,omitempty"`
-	Gender         *string        `json:"gender,omitempty"`
-	Name2          *string        `json:"name2,omitempty"`
-	Birthday       *string        `json:"birthday,omitempty"`
-	VATNumber      *string        `json:"vatNumber,omitempty"`
-	BankAccount    *string        `json:"bankAccount,omitempty"`
-	BankNumber     *string        `json:"bankNumber,omitempty"`
+	Name           *string       `json:"name,omitempty"`
+	Status         ContactStatus `json:"status,omitempty"`
+	CustomerNumber *string       `json:"customerNumber,omitempty"`
+	Parent         *Ref          `json:"parent,omitempty"`
+	Surename       *string       `json:"surename,omitempty"`
+	Familyname     *string       `json:"familyname,omitempty"`
+	Titel          *string       `json:"titel,omitempty"`
+	Category       *Ref          `json:"category,omitempty"`
+	Description    *string       `json:"description,omitempty"`
+	AcademicTitle  *string       `json:"academicTitle,omitempty"`
+	Gender         *string       `json:"gender,omitempty"`
+	Name2          *string       `json:"name2,omitempty"`
+	Birthday       *string       `json:"birthday,omitempty"`
+	VATNumber      *string       `json:"vatNumber,omitempty"`
+	BankAccount    *string       `json:"bankAccount,omitempty"`
+	BankNumber     *string       `json:"bankNumber,omitempty"`
 
 	DefaultCashbackTime       *int     `json:"defaultCashbackTime,omitempty"`
 	DefaultCashbackPercent    *float64 `json:"defaultCashbackPercent,omitempty"`

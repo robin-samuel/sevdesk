@@ -235,7 +235,7 @@ type CreditNoteCreateFields struct {
 	// Address is the rendered address (multi-line string).
 	Address *string `json:"address,omitempty"`
 	// Status of the credit note. See [CreditNoteStatusDraft] and adjacent.
-	Status *CreditNoteStatus `json:"status,omitempty"`
+	Status CreditNoteStatus `json:"status,omitempty"`
 	// SmallSettlement marks the note as Kleinunternehmer (no VAT shown).
 	SmallSettlement *Bool `json:"smallSettlement,omitempty"`
 	// TaxRate is the default tax rate when positions don't override it.
@@ -263,27 +263,27 @@ type CreditNoteCreateFields struct {
 // UpdateCreditNoteParams is the body for [CreditNotesService.Update]. Only
 // works for drafts. See [CreditNoteCreateFields] for field semantics.
 type UpdateCreditNoteParams struct {
-	CreditNoteNumber     *string           `json:"creditNoteNumber,omitempty"`
-	Contact              *Ref              `json:"contact,omitempty"`
-	ContactPerson        *Ref              `json:"contactPerson,omitempty"`
-	CreditNoteDate       *time.Time        `json:"creditNoteDate,omitempty"`
-	Header               *string           `json:"header,omitempty"`
-	HeadText             *string           `json:"headText,omitempty"`
-	FootText             *string           `json:"footText,omitempty"`
-	AddressCountry       *Ref              `json:"addressCountry,omitempty"`
-	Address              *string           `json:"address,omitempty"`
-	Status               *CreditNoteStatus `json:"status,omitempty"`
-	SmallSettlement      *Bool             `json:"smallSettlement,omitempty"`
-	TaxRate              *Decimal          `json:"taxRate,omitempty"`
-	TaxRule              *Ref              `json:"taxRule,omitempty"`
-	TaxText              *string           `json:"taxText,omitempty"`
-	TaxType              *string           `json:"taxType,omitempty"`
-	Currency             *string           `json:"currency,omitempty"`
-	BookingCategory      *BookingCategory  `json:"bookingCategory,omitempty"`
-	ShowNet              *Bool             `json:"showNet,omitempty"`
-	SendType             *SendType         `json:"sendType,omitempty"`
-	CustomerInternalNote *string           `json:"customerInternalNote,omitempty"`
-	DeliveryDate         *time.Time        `json:"deliveryDate,omitempty"`
+	CreditNoteNumber     *string          `json:"creditNoteNumber,omitempty"`
+	Contact              *Ref             `json:"contact,omitempty"`
+	ContactPerson        *Ref             `json:"contactPerson,omitempty"`
+	CreditNoteDate       *time.Time       `json:"creditNoteDate,omitempty"`
+	Header               *string          `json:"header,omitempty"`
+	HeadText             *string          `json:"headText,omitempty"`
+	FootText             *string          `json:"footText,omitempty"`
+	AddressCountry       *Ref             `json:"addressCountry,omitempty"`
+	Address              *string          `json:"address,omitempty"`
+	Status               CreditNoteStatus `json:"status,omitempty"`
+	SmallSettlement      *Bool            `json:"smallSettlement,omitempty"`
+	TaxRate              *Decimal         `json:"taxRate,omitempty"`
+	TaxRule              *Ref             `json:"taxRule,omitempty"`
+	TaxText              *string          `json:"taxText,omitempty"`
+	TaxType              *string          `json:"taxType,omitempty"`
+	Currency             *string          `json:"currency,omitempty"`
+	BookingCategory      *BookingCategory `json:"bookingCategory,omitempty"`
+	ShowNet              *Bool            `json:"showNet,omitempty"`
+	SendType             *SendType        `json:"sendType,omitempty"`
+	CustomerInternalNote *string          `json:"customerInternalNote,omitempty"`
+	DeliveryDate         *time.Time       `json:"deliveryDate,omitempty"`
 }
 
 // ListCreditNotesParams filters [CreditNotesService.List].

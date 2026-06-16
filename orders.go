@@ -182,7 +182,7 @@ type OrderCreateFields struct {
 	// OrderDate is the document date. Required.
 	OrderDate *time.Time `json:"orderDate"`
 	// Status of the order. See [OrderStatusDraft] and adjacent.
-	Status *OrderStatus `json:"status,omitempty"`
+	Status OrderStatus `json:"status,omitempty"`
 	// Header is the document title.
 	Header *string `json:"header,omitempty"`
 	// HeadText is the rich-text intro.
@@ -222,27 +222,27 @@ type OrderCreateFields struct {
 // UpdateOrderParams is the body for [OrdersService.Update]. Only works for
 // drafts. See [OrderCreateFields] for field semantics.
 type UpdateOrderParams struct {
-	OrderNumber          *string      `json:"orderNumber,omitempty"`
-	Contact              *Ref         `json:"contact,omitempty"`
-	ContactPerson        *Ref         `json:"contactPerson,omitempty"`
-	OrderDate            *time.Time   `json:"orderDate,omitempty"`
-	Status               *OrderStatus `json:"status,omitempty"`
-	Header               *string      `json:"header,omitempty"`
-	HeadText             *string      `json:"headText,omitempty"`
-	FootText             *string      `json:"footText,omitempty"`
-	AddressCountry       *Ref         `json:"addressCountry,omitempty"`
-	DeliveryTerms        *string      `json:"deliveryTerms,omitempty"`
-	PaymentTerms         *string      `json:"paymentTerms,omitempty"`
-	TaxRate              *Decimal     `json:"taxRate,omitempty"`
-	TaxRule              *Ref         `json:"taxRule,omitempty"`
-	TaxText              *string      `json:"taxText,omitempty"`
-	TaxType              *string      `json:"taxType,omitempty"`
-	OrderType            *OrderType   `json:"orderType,omitempty"`
-	Currency             *string      `json:"currency,omitempty"`
-	Address              *string      `json:"address,omitempty"`
-	CustomerInternalNote *string      `json:"customerInternalNote,omitempty"`
-	ShowNet              *Bool        `json:"showNet,omitempty"`
-	SendType             *SendType    `json:"sendType,omitempty"`
+	OrderNumber          *string     `json:"orderNumber,omitempty"`
+	Contact              *Ref        `json:"contact,omitempty"`
+	ContactPerson        *Ref        `json:"contactPerson,omitempty"`
+	OrderDate            *time.Time  `json:"orderDate,omitempty"`
+	Status               OrderStatus `json:"status,omitempty"`
+	Header               *string     `json:"header,omitempty"`
+	HeadText             *string     `json:"headText,omitempty"`
+	FootText             *string     `json:"footText,omitempty"`
+	AddressCountry       *Ref        `json:"addressCountry,omitempty"`
+	DeliveryTerms        *string     `json:"deliveryTerms,omitempty"`
+	PaymentTerms         *string     `json:"paymentTerms,omitempty"`
+	TaxRate              *Decimal    `json:"taxRate,omitempty"`
+	TaxRule              *Ref        `json:"taxRule,omitempty"`
+	TaxText              *string     `json:"taxText,omitempty"`
+	TaxType              *string     `json:"taxType,omitempty"`
+	OrderType            *OrderType  `json:"orderType,omitempty"`
+	Currency             *string     `json:"currency,omitempty"`
+	Address              *string     `json:"address,omitempty"`
+	CustomerInternalNote *string     `json:"customerInternalNote,omitempty"`
+	ShowNet              *Bool       `json:"showNet,omitempty"`
+	SendType             *SendType   `json:"sendType,omitempty"`
 }
 
 // ListOrdersParams filters [OrdersService.List].

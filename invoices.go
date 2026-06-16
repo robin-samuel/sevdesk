@@ -270,7 +270,7 @@ type InvoiceCreateFields struct {
 	// DeliveryDate is when the goods/services were delivered.
 	DeliveryDate *time.Time `json:"deliveryDate,omitempty"`
 	// Status of the invoice. See [InvoiceStatusDraft] and adjacent.
-	Status *InvoiceStatus `json:"status,omitempty"`
+	Status InvoiceStatus `json:"status,omitempty"`
 	// SmallSettlement marks the invoice as Kleinunternehmer (no VAT shown).
 	SmallSettlement *Bool `json:"smallSettlement,omitempty"`
 	// TaxRate is the default tax rate when positions don't override it.
@@ -307,31 +307,31 @@ type InvoiceCreateFields struct {
 // UpdateInvoiceParams is the body for [InvoicesService.Update]. Only works for
 // drafts. See [InvoiceCreateFields] for field semantics.
 type UpdateInvoiceParams struct {
-	InvoiceNumber        *string        `json:"invoiceNumber,omitempty"`
-	Contact              *Ref           `json:"contact,omitempty"`
-	ContactPerson        *Ref           `json:"contactPerson,omitempty"`
-	InvoiceDate          *time.Time     `json:"invoiceDate,omitempty"`
-	Header               *string        `json:"header,omitempty"`
-	HeadText             *string        `json:"headText,omitempty"`
-	FootText             *string        `json:"footText,omitempty"`
-	TimeToPay            *int           `json:"timeToPay,omitempty"`
-	Discount             *int           `json:"discount,omitempty"`
-	Address              *string        `json:"address,omitempty"`
-	AddressCountry       *Ref           `json:"addressCountry,omitempty"`
-	DeliveryDate         *time.Time     `json:"deliveryDate,omitempty"`
-	Status               *InvoiceStatus `json:"status,omitempty"`
-	SmallSettlement      *Bool          `json:"smallSettlement,omitempty"`
-	TaxRate              *Decimal       `json:"taxRate,omitempty"`
-	TaxRule              *Ref           `json:"taxRule,omitempty"`
-	TaxText              *string        `json:"taxText,omitempty"`
-	TaxType              *string        `json:"taxType,omitempty"`
-	Currency             *string        `json:"currency,omitempty"`
-	PaymentMethod        *Ref           `json:"paymentMethod,omitempty"`
-	CostCentre           *Ref           `json:"costCentre,omitempty"`
-	ShowNet              *Bool          `json:"showNet,omitempty"`
-	SendDate             *time.Time     `json:"sendDate,omitempty"`
-	SendType             *SendType      `json:"sendType,omitempty"`
-	CustomerInternalNote *string        `json:"customerInternalNote,omitempty"`
+	InvoiceNumber        *string       `json:"invoiceNumber,omitempty"`
+	Contact              *Ref          `json:"contact,omitempty"`
+	ContactPerson        *Ref          `json:"contactPerson,omitempty"`
+	InvoiceDate          *time.Time    `json:"invoiceDate,omitempty"`
+	Header               *string       `json:"header,omitempty"`
+	HeadText             *string       `json:"headText,omitempty"`
+	FootText             *string       `json:"footText,omitempty"`
+	TimeToPay            *int          `json:"timeToPay,omitempty"`
+	Discount             *int          `json:"discount,omitempty"`
+	Address              *string       `json:"address,omitempty"`
+	AddressCountry       *Ref          `json:"addressCountry,omitempty"`
+	DeliveryDate         *time.Time    `json:"deliveryDate,omitempty"`
+	Status               InvoiceStatus `json:"status,omitempty"`
+	SmallSettlement      *Bool         `json:"smallSettlement,omitempty"`
+	TaxRate              *Decimal      `json:"taxRate,omitempty"`
+	TaxRule              *Ref          `json:"taxRule,omitempty"`
+	TaxText              *string       `json:"taxText,omitempty"`
+	TaxType              *string       `json:"taxType,omitempty"`
+	Currency             *string       `json:"currency,omitempty"`
+	PaymentMethod        *Ref          `json:"paymentMethod,omitempty"`
+	CostCentre           *Ref          `json:"costCentre,omitempty"`
+	ShowNet              *Bool         `json:"showNet,omitempty"`
+	SendDate             *time.Time    `json:"sendDate,omitempty"`
+	SendType             *SendType     `json:"sendType,omitempty"`
+	CustomerInternalNote *string       `json:"customerInternalNote,omitempty"`
 }
 
 // ListInvoicesParams filters [InvoicesService.List].
