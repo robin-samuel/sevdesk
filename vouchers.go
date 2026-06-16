@@ -159,6 +159,10 @@ type VoucherCreateFields struct {
 	ObjectName string `json:"objectName"` // set by Create
 	MapAll     bool   `json:"mapAll"`     // set by Create
 
+	// ID identifies an existing voucher when re-saving an existing one
+	// (e.g. via [VouchersService.SavePositions]). Leave nil to create.
+	ID *ID `json:"id,omitempty"`
+
 	// Status of the voucher. See [VoucherStatus].
 	Status VoucherStatus `json:"status,omitempty"`
 	// TaxType controls how VAT is applied. Common values: "default", "eu",
@@ -376,6 +380,30 @@ func (s *VouchersService) Create(ctx context.Context, params *CreateVoucherParam
 		return nil, err
 	}
 	return decodeObject[CreateVoucherResult](raw)
+}
+
+// SavePositions adds and/or removes positions on an existing voucher in one
+// atomic call (routed through POST /Voucher/Factory/saveVoucher with the
+// voucher's id, since sevdesk has no dedicated update endpoint for individual
+// voucher positions).
+//
+// Use [VoucherPosRef] to build the delete list:
+//
+//	c.Vouchers.SavePositions(ctx, voucherID,
+//		[]sevdesk.VoucherPosCreate{newPos},
+//		[]sevdesk.Ref{*sevdesk.VoucherPosRef(oldPosID)},
+//	)
+//
+// May fail with 409 if the voucher is no longer a draft.
+func (s *VouchersService) SavePositions(ctx context.Context, voucherID ID, add []VoucherPosCreate, delete []Ref) (*CreateVoucherResult, error) {
+	params := &CreateVoucherParams{
+		Voucher: &VoucherCreateFields{
+			ID: &voucherID,
+		},
+		Positions:       add,
+		PositionsDelete: delete,
+	}
+	return s.Create(ctx, params)
 }
 
 // Update modifies a voucher.

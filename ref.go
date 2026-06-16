@@ -80,3 +80,15 @@ func CountryRef(id ID) *Ref { return &Ref{id, ObjectStaticCountry} }
 
 // UserRef returns a Ref for a SevUser with the given id.
 func UserRef(id ID) *Ref { return &Ref{id, ObjectSevUser} }
+
+// VoucherPosRef returns a Ref for a VoucherPos with the given id.
+func VoucherPosRef(id ID) *Ref { return &Ref{id, ObjectVoucherPos} }
+
+// InvoicePosRef returns a Ref for an InvoicePos with the given id.
+func InvoicePosRef(id ID) *Ref { return &Ref{id, ObjectInvoicePos} }
+
+// OrderPosRef returns a Ref for an OrderPos with the given id.
+func OrderPosRef(id ID) *Ref { return &Ref{id, ObjectOrderPos} }
+
+// CreditNotePosRef returns a Ref for a CreditNotePos with the given id.
+func CreditNotePosRef(id ID) *Ref { return &Ref{id, ObjectCreditNotePos} }
