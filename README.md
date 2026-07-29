@@ -57,8 +57,8 @@ Each resource hangs off the `Client` as its own service:
 | `c.PrivateTransactionRules` | Rules for auto-marking transactions as private |
 | `c.Parts` | Inventory items |
 | `c.Tags` | Tags attachable to invoices, orders, vouchers, credit notes |
-| `c.AccountingTypes` | List/get booking accounts (sevdesk **v1** bookkeeping). 125 German entries are also embedded as named `*Ref` variables (e.g. `sevdesk.AccountingTypePetrol`) for direct use in Params. |
-| `c.ReceiptGuidance` | Look up AccountingType IDs by DATEV account number, tax rule, or category (sevdesk **v2**) |
+| `c.AccountingTypes` | List/get booking accounts (bookkeeping **1.0**). 125 German entries are also embedded as named `*Ref` variables (e.g. `sevdesk.AccountingTypePetrol`) for direct use in Params. |
+| `c.ReceiptGuidance` | Look up bookable DATEV accounts by number, tax rule, or category (bookkeeping **2.0**). The 652-entry German chart is also bundled — `sevdesk.AccountDatev(6815)` — as are the tax rules, e.g. `sevdesk.TaxRuleDeductibleExpense`. |
 
 Full method reference: [pkg.go.dev/github.com/robin-samuel/sevdesk](https://pkg.go.dev/github.com/robin-samuel/sevdesk).
 
@@ -91,6 +91,56 @@ List endpoints return `iter.Seq2[T, error]` and paginate automatically. Drain in
 ```go
 invoices, err := sevdesk.Collect(c.Invoices.List(ctx, nil))
 ```
+
+## sevdesk-Update 2.0
+
+sevdesk moves accounts from bookkeeping system 1.0 to 2.0 one at a time, and the two want different fields. Ask which one your key is on:
+
+```go
+v, err := c.BookkeepingVersion(ctx) // sevdesk.BookkeepingV1 or BookkeepingV2
+```
+
+**Booking accounts.** 2.0 replaces `accountingType` with `accountDatev`, and only accounts returned by the receipt-guidance endpoints are bookable — custom accounts are gone. The German DATEV chart ships with the SDK, so the common case needs no API call and no number lookup:
+
+```go
+pos := sevdesk.VoucherPosCreate{
+	AccountDatev: sevdesk.AccountDatevBuerobedarf, // 6815 Bürobedarf
+	TaxRate:      19,
+	Net:          true,
+	SumNet:       100,
+	SumGross:     119,
+}
+```
+
+77 accounts a business books to routinely have names — `AccountDatevErloese19USt`, `AccountDatevLaufendeKfzBetriebskosten`, `AccountDatevRechtsUndBeratungskosten`, `AccountDatevReisekostenUnternehmer`. Identifiers keep the German DATEV labels (umlauts as `ue`/`oe`/`ae`/`ss`) so they line up with what you see in sevdesk and in your accountant's chart; the DATEV number and exact label are in each doc comment. All 652 accounts of the chart stay reachable by number:
+
+```go
+pos.AccountDatev = sevdesk.AccountDatev(7364) // nil if the number isn't in the chart
+```
+
+To discover accounts at runtime — or to find out which tax rules and rates one accepts — ask the guidance endpoints:
+
+```go
+guide, err := c.ReceiptGuidance.ForAccountNumber(ctx, 6815)
+// guide.Ref() is the *Ref for AccountDatev above
+for _, rule := range guide.AllowedTaxRules {
+	log.Println(rule.ID, rule.Name, rule.TaxRates) // 9 VORST_ABZUGSF_AUFW [ZERO SEVEN NINETEEN]
+}
+```
+
+1.0 ids still work where the SKR number survived into the guidance — sevdesk maps them — so `sevdesk.AccountingTypePetrol` and friends keep functioning on a migrated client. Mismatched account/rule/rate combinations answer HTTP 422 (`sevdesk.ErrValidation`).
+
+**VAT rules.** 2.0 replaces `taxType`/`taxSet` with `taxRule` and drops `taxType: "custom"` outright. The documented rules ship as named refs, split by document side:
+
+```go
+&sevdesk.InvoiceCreateFields{TaxRule: sevdesk.TaxRuleTaxableRevenue}   // revenue
+&sevdesk.VoucherCreateFields{TaxRule: sevdesk.TaxRuleDeductibleExpense} // expense
+&sevdesk.InvoiceCreateFields{TaxRule: sevdesk.TaxRuleSmallBusiness}     // Kleinunternehmer
+```
+
+Also changed in 2.0, and noted on the affected methods: vouchers can no longer be created as paid (book them instead), credit notes can only be created as drafts, `CreditNotes.CreateFromVoucher` is removed, and `Invoices.ChangeLayout` is removed.
+
+Objects created before a migration keep their 1.0 shape, so responses can still carry `taxType` and `accountingType` on a 2.0 client — both fields stay populated on read models.
 
 ## Wire-format quirks
 
@@ -131,6 +181,7 @@ case errors.Is(err, sevdesk.ErrNotFound):     // 404
 case errors.Is(err, sevdesk.ErrUnauthorized): // 401 — bad API key
 case errors.Is(err, sevdesk.ErrForbidden):    // 403
 case errors.Is(err, sevdesk.ErrConflict):     // 409 — e.g. deleting a non-draft
+case errors.Is(err, sevdesk.ErrValidation):   // 422 — e.g. account/tax-rule mismatch
 case errors.Is(err, sevdesk.ErrRateLimit):    // 429
 }
 

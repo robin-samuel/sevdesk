@@ -199,11 +199,18 @@ type OrderCreateFields struct {
 	SmallSettlement *Bool `json:"smallSettlement,omitempty"`
 	// TaxRate is the default tax rate when positions don't override it.
 	TaxRate *Decimal `json:"taxRate,omitempty"`
-	// TaxRule selects the tax rule. Required.
+	// TaxRule selects the VAT regulation and replaces TaxType/TaxSet in
+	// sevdesk-Update 2.0. Required.
+	//
+	// Orders are the revenue side, so use the revenue rules —
+	// [TaxRuleTaxableRevenue], or [TaxRuleSmallBusiness] for Kleinunternehmer.
 	TaxRule *Ref `json:"taxRule"`
 	// TaxText is the line printed below the totals.
 	TaxText *string `json:"taxText,omitempty"`
-	// TaxType picks the tax mode.
+	// TaxType is the sevdesk 1.0 VAT mode ("default", "eu", "noteu", "ss").
+	//
+	// Deprecated: set TaxRule instead. sevdesk-Update 2.0 maps the old values
+	// for a transition period and rejects "custom" outright.
 	TaxType *string `json:"taxType,omitempty"`
 	// OrderType picks the kind. Required. See [OrderType].
 	OrderType OrderType `json:"orderType"`

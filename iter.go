@@ -48,6 +48,34 @@ func listIter[T any](ctx context.Context, c *Client, path string, baseQuery url.
 	}
 }
 
+// listOnce is the internal single-request iterator, for endpoints that answer
+// with their whole result set at once.
+//
+// sevdesk's /ReceiptGuidance endpoints ignore limit and offset — they return
+// every matching account no matter what is asked for — so driving them through
+// listIter would never see a short page and would re-yield the same records
+// forever.
+func listOnce[T any](ctx context.Context, c *Client, path string, query url.Values) iter.Seq2[T, error] {
+	return func(yield func(T, error) bool) {
+		var zero T
+		raw, err := c.do(ctx, http.MethodGet, path, query, nil)
+		if err != nil {
+			yield(zero, err)
+			return
+		}
+		items, err := decodeList[T](raw)
+		if err != nil {
+			yield(zero, err)
+			return
+		}
+		for _, item := range items {
+			if !yield(item, nil) {
+				return
+			}
+		}
+	}
+}
+
 // Collect drains a list iterator into a slice. It stops at the first error and
 // returns whatever was collected so far together with the error.
 //

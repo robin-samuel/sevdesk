@@ -10,21 +10,26 @@ import (
 
 // AccountingTypesService exposes sevdesk's /AccountingType endpoints.
 //
-// AccountingType is the booking account used on voucher positions in the
-// sevdesk v1 bookkeeping system. Sevdesk maintains the catalogue — your job
-// is to GET the existing entries and pick the right ID for [VoucherPosCreate].
+// AccountingType is the booking account of the sevdesk 1.0 bookkeeping system.
+// sevdesk maintains the catalogue — your job is to GET the existing entries and
+// pick the right ID for [VoucherPosCreate.AccountingType].
 //
-// The German subset (125 entries with SKR03 / SKR04 numbers) is also bundled
-// as named [*Ref] variables — e.g. [AccountingTypePetrol], usable directly in
-// [VoucherPosCreate.AccountingType] without any API call.
+// The German subset (125 entries with SKR03 / SKR04 numbers) is also bundled as
+// named [*Ref] variables — e.g. [AccountingTypePetrol], usable without any API
+// call.
 //
-// On the newer sevdesk v2 (DATEV-based) system, use [ReceiptGuidanceService]
-// instead to discover [AccountingType] references via DATEV account numbers.
+// On sevdesk-Update 2.0 this catalogue is superseded by AccountDatev: use
+// [ReceiptGuidanceService] to discover accounts and set
+// [VoucherPosCreate.AccountDatev]. Existing AccountingType ids whose SKR number
+// survived into the receipt guidance keep working — sevdesk maps them — so 1.0
+// code doesn't break on migration, but the account's allowed tax rules and
+// rates are enforced from then on. [Client.BookkeepingVersion] tells you which
+// system a key is on.
 type AccountingTypesService struct {
 	c *Client
 }
 
-// AccountingType is a booking account in the sevdesk v1 system.
+// AccountingType is a booking account in the sevdesk 1.0 system.
 type AccountingType struct {
 	ID         ID         `json:"id,omitempty"`
 	ObjectName string     `json:"objectName,omitempty"`

@@ -163,10 +163,16 @@ type VoucherCreateFields struct {
 	// (e.g. via [VouchersService.SavePositions]). Leave nil to create.
 	ID *ID `json:"id,omitempty"`
 
-	// Status of the voucher. See [VoucherStatus].
+	// Status of the voucher. See [VoucherStatus]. On sevdesk-Update 2.0 a new
+	// voucher may only be created as [VoucherStatusDraft] or
+	// [VoucherStatusOpen]; reach paid via [VouchersService.Book].
 	Status VoucherStatus `json:"status,omitempty"`
-	// TaxType controls how VAT is applied. Common values: "default", "eu",
-	// "noteu", "custom", "ss" (Kleinunternehmer).
+	// TaxType is the sevdesk 1.0 VAT mode: "default", "eu", "noteu", "custom"
+	// or "ss" (Kleinunternehmer). Superseded by TaxRule in 2.0, which drops
+	// "custom" (and TaxSet with it) entirely.
+	//
+	// Deprecated: set TaxRule instead. sevdesk maps "default", "eu" and "ss" to
+	// tax rules for a transition period only.
 	TaxType *string `json:"taxType,omitempty"`
 	// CreditDebit picks the direction. See [CreditDebit].
 	CreditDebit *CreditDebit `json:"creditDebit,omitempty"`
@@ -191,8 +197,13 @@ type VoucherCreateFields struct {
 	DeliveryDate *time.Time `json:"deliveryDate,omitempty"`
 	// DeliveryDateUntil sets the end of a delivery period (use with DeliveryDate).
 	DeliveryDateUntil *time.Time `json:"deliveryDateUntil,omitempty"`
-	// TaxRule selects the tax rule (e.g. domestic, reverse charge).
-	// Required by sevdesk for valid bookings.
+	// TaxRule selects the VAT regulation and replaces TaxType/TaxSet in
+	// sevdesk-Update 2.0. Required by sevdesk for valid bookings.
+	//
+	// Vouchers are the expense side, so use the expense rules —
+	// [TaxRuleDeductibleExpense] for the common case. The rule must be
+	// compatible with each position's TaxRate and booking account; see
+	// [ReceiptGuidanceService].
 	TaxRule *Ref `json:"taxRule,omitempty"`
 	// CostCentre assigns the voucher to a cost centre.
 	CostCentre *Ref `json:"costCentre,omitempty"`
@@ -212,9 +223,24 @@ type VoucherPosCreate struct {
 	ObjectName string `json:"objectName"` // set by Create
 	MapAll     bool   `json:"mapAll"`     // set by Create
 
-	// AccountingType assigns the position to a DATEV account.
-	// Required. List options via [TODO once added] or sevdesk's UI.
-	AccountingType *Ref `json:"accountingType"`
+	// AccountDatev is the booking account in sevdesk-Update 2.0, where it
+	// replaces AccountingType. Set exactly one of AccountDatev or
+	// AccountingType.
+	//
+	// Build it with [AccountDatevRef], or take it straight from
+	// [ReceiptGuide.Ref] — [ReceiptGuidanceService] is how you find the account
+	// that fits your tax rule and rate. Custom accounts are gone in 2.0; only
+	// accounts the guidance endpoints return are bookable.
+	AccountDatev *Ref `json:"accountDatev,omitempty"`
+	// AccountingType is the sevdesk 1.0 booking account. Still accepted on 2.0
+	// for accounts whose SKR number survived into the receipt guidance —
+	// sevdesk maps those to the matching AccountDatev — but the tax rate here
+	// and the voucher's TaxRule must both be allowed for that account or the
+	// API answers 422.
+	//
+	// The bundled German catalogue ([AccountingTypePetrol] and friends) is a
+	// 1.0 snapshot. New code should set AccountDatev instead.
+	AccountingType *Ref `json:"accountingType,omitempty"`
 	// TaxRate is the VAT rate as a percentage (e.g. 19 for 19%).
 	TaxRate Decimal `json:"taxRate"`
 	// Net indicates whether SumNet/SumGross are net (true) or gross (false) amounts.

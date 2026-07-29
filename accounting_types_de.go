@@ -1,12 +1,17 @@
 package sevdesk
 
 // AccountingType references for the German SKR03 / SKR04 charts.
-// Each value is a [*Ref] ready to drop into a [VoucherPosCreate.AccountingType]
-// or [CreditNoteCreateFields.AccountingType] field.
+// Each value is a [*Ref] ready to drop into [VoucherPosCreate.AccountingType].
 //
 // Snapshot taken from sevdesk's /AccountingType endpoint. IDs are permanent;
 // sevdesk may add new entries over time. For non-German charts (Austria,
 // Switzerland, etc.) or to refresh, use [AccountingTypesService].
+//
+// This is the sevdesk 1.0 catalogue. On sevdesk-Update 2.0 these still resolve
+// for accounts whose SKR number remains in the receipt guidance, but the
+// account then constrains the allowed tax rules and rates — prefer
+// [VoucherPosCreate.AccountDatev] with an account from
+// [ReceiptGuidanceService].
 var (
 	// AccountingTypeOtherIncome — Sonstige Erträge (SKR03 8625, SKR04 4830, kind E).
 	AccountingTypeOtherIncome = &Ref{ID: 1, ObjectName: ObjectAccountingType}

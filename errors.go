@@ -22,6 +22,12 @@ var (
 	ErrForbidden = errors.New("sevdesk: forbidden")
 	// ErrConflict matches a 409 response (e.g. trying to delete a non-draft).
 	ErrConflict = errors.New("sevdesk: conflict")
+	// ErrValidation matches a 422 response: the request was well-formed but
+	// sevdesk rejected its contents. This is the standard answer of
+	// sevdesk-Update 2.0 when a booking account, TaxRule and position tax rate
+	// don't fit together — [ReceiptGuidanceService] reports the valid
+	// combinations. Error.Message carries sevdesk's reason.
+	ErrValidation = errors.New("sevdesk: validation failed")
 	// ErrRateLimit matches a 429 response.
 	ErrRateLimit = errors.New("sevdesk: rate limited")
 )
@@ -66,6 +72,8 @@ func (e *Error) Is(target error) bool {
 		return e.StatusCode == http.StatusForbidden
 	case ErrConflict:
 		return e.StatusCode == http.StatusConflict
+	case ErrValidation:
+		return e.StatusCode == http.StatusUnprocessableEntity
 	case ErrRateLimit:
 		return e.StatusCode == http.StatusTooManyRequests
 	}

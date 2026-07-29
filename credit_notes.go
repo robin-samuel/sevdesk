@@ -127,6 +127,10 @@ const (
 )
 
 // BookingCategory classifies what a credit note is for.
+//
+// sevdesk-Update 2.0 dropped the ACCOUNTING_TYPE category — on 2.0 a credit
+// note is classified by one of the categories below rather than by a booking
+// account.
 type BookingCategory string
 
 // BookingCategory values.
@@ -235,16 +239,26 @@ type CreditNoteCreateFields struct {
 	// Address is the rendered address (multi-line string).
 	Address *string `json:"address,omitempty"`
 	// Status of the credit note. See [CreditNoteStatusDraft] and adjacent.
+	// On sevdesk-Update 2.0 a credit note can only be created as
+	// [CreditNoteStatusDraft]; the status then advances through the dedicated
+	// endpoints (e.g. [CreditNotesService.SendViaEmail]).
 	Status CreditNoteStatus `json:"status,omitempty"`
 	// SmallSettlement marks the note as Kleinunternehmer (no VAT shown).
 	SmallSettlement *Bool `json:"smallSettlement,omitempty"`
 	// TaxRate is the default tax rate when positions don't override it.
 	TaxRate *Decimal `json:"taxRate,omitempty"`
-	// TaxRule selects the tax rule. Required.
+	// TaxRule selects the VAT regulation and replaces TaxType/TaxSet in
+	// sevdesk-Update 2.0. Required.
+	//
+	// Credit notes are the revenue side, so use the revenue rules —
+	// [TaxRuleTaxableRevenue], or [TaxRuleSmallBusiness] for Kleinunternehmer.
 	TaxRule *Ref `json:"taxRule"`
 	// TaxText is the line printed below the totals.
 	TaxText *string `json:"taxText,omitempty"`
-	// TaxType picks the tax mode (e.g. "default", "eu", "noteu", "ss").
+	// TaxType is the sevdesk 1.0 VAT mode ("default", "eu", "noteu", "ss").
+	//
+	// Deprecated: set TaxRule instead. sevdesk-Update 2.0 maps the old values
+	// for a transition period and rejects "custom" outright.
 	TaxType *string `json:"taxType,omitempty"`
 	// Currency is the ISO 4217 code. Required.
 	Currency string `json:"currency"`
@@ -388,6 +402,10 @@ func (s *CreditNotesService) CreateFromInvoice(ctx context.Context, invoiceID ID
 }
 
 // CreateFromVoucher generates a credit note based on an existing voucher.
+//
+// Only available on sevdesk 1.0. sevdesk-Update 2.0 removed the endpoint —
+// crediting a voucher isn't possible there — so on a migrated client this
+// returns an API error. Check with [Client.BookkeepingVersion].
 func (s *CreditNotesService) CreateFromVoucher(ctx context.Context, voucherID ID) (*CreateCreditNoteResult, error) {
 	body := map[string]any{
 		"voucher": map[string]any{

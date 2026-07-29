@@ -92,3 +92,20 @@ func OrderPosRef(id ID) *Ref { return &Ref{id, ObjectOrderPos} }
 
 // CreditNotePosRef returns a Ref for a CreditNotePos with the given id.
 func CreditNotePosRef(id ID) *Ref { return &Ref{id, ObjectCreditNotePos} }
+
+// AccountDatevRef returns a Ref for an AccountDatev with the given id.
+//
+// AccountDatev is the booking account in sevdesk-Update 2.0. Discover ids with
+// [ReceiptGuidanceService] — [ReceiptGuide.Ref] hands you the Ref directly.
+func AccountDatevRef(id ID) *Ref { return &Ref{id, ObjectAccountDatev} }
+
+// AccountingTypeRef returns a Ref for an AccountingType with the given id.
+//
+// AccountingType is the sevdesk 1.0 booking account. On 2.0 it still works for
+// accounts whose SKR number survived into the receipt guidance — sevdesk maps
+// them to AccountDatev — but new code should use [AccountDatevRef].
+func AccountingTypeRef(id ID) *Ref { return &Ref{id, ObjectAccountingType} }
+
+// TaxRuleRef returns a Ref for a TaxRule with the given id. Prefer the named
+// rules in [TaxRuleTaxableRevenue] and friends over raw ids.
+func TaxRuleRef(id ID) *Ref { return &Ref{id, ObjectTaxRule} }

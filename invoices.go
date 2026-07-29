@@ -275,12 +275,21 @@ type InvoiceCreateFields struct {
 	SmallSettlement *Bool `json:"smallSettlement,omitempty"`
 	// TaxRate is the default tax rate when positions don't override it.
 	TaxRate *Decimal `json:"taxRate,omitempty"`
-	// TaxRule selects the tax rule (domestic, reverse charge, etc.). Required.
+	// TaxRule selects the VAT regulation and replaces TaxType/TaxSet in
+	// sevdesk-Update 2.0. Required.
+	//
+	// Invoices are the revenue side, so use the revenue rules —
+	// [TaxRuleTaxableRevenue] for domestic sales, [TaxRuleSmallBusiness] for
+	// Kleinunternehmer. Some rules can't be used for advance, partial or final
+	// invoices; see the notes on each.
 	TaxRule *Ref `json:"taxRule"`
 	// TaxText is the line printed below the totals (e.g. "VAT 19%").
 	TaxText *string `json:"taxText,omitempty"`
-	// TaxType picks the tax mode. Common values: "default", "eu", "noteu",
-	// "custom", "ss" (Kleinunternehmer).
+	// TaxType is the sevdesk 1.0 VAT mode ("default", "eu", "noteu", "custom",
+	// "ss").
+	//
+	// Deprecated: set TaxRule instead. sevdesk-Update 2.0 maps "default", "eu"
+	// and "ss" for a transition period and rejects "custom" outright.
 	TaxType *string `json:"taxType,omitempty"`
 	// InvoiceType picks the document kind. Required. See [InvoiceType].
 	InvoiceType InvoiceType `json:"invoiceType"`
@@ -755,6 +764,10 @@ type ChangeLayoutParams struct {
 }
 
 // ChangeLayout changes the rendering layout of an invoice (template, paper, language).
+//
+// Only available on sevdesk 1.0: sevdesk-Update 2.0 removed
+// /Invoice/{id}/changeParameter. The order and credit note equivalents are
+// unaffected.
 func (s *InvoicesService) ChangeLayout(ctx context.Context, id ID, params *ChangeLayoutParams) (*RenderResult, error) {
 	raw, err := s.c.do(ctx, http.MethodPut, fmt.Sprintf("/Invoice/%d/changeParameter", id), nil, params)
 	if err != nil {
