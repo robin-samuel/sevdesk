@@ -6,9 +6,9 @@ import "time"
 // is meaningful (so omitempty isn't enough on its own):
 //
 //	&sevdesk.CreateContactParams{
-//		Name:        sevdesk.Ptr("Acme GmbH"),
-//		ExemptVAT:   sevdesk.True,
-//		CreditDebit: sevdesk.Ptr(sevdesk.VoucherCredit),
+//		Name:           sevdesk.Ptr("Acme GmbH"),
+//		CustomerNumber: sevdesk.Ptr("Customer-1337"),
+//		ExemptVAT:      sevdesk.True,
 //	}
 //
 // Mind Go's type inference: sevdesk.Ptr(42) gives *int, not *int64 — use

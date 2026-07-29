@@ -68,9 +68,9 @@ Request params use pointers for optional fields. Use the helper constructors so 
 
 ```go
 _, err := c.Contacts.Create(ctx, &sevdesk.CreateContactParams{
-	Category: sevdesk.CategoryRef(3), // 3 = Customer
-	Name:     sevdesk.String("Acme GmbH"),
-	Status:   sevdesk.Ptr(sevdesk.ContactStatusActive),
+	Category:  sevdesk.CategoryRef(3), // 3 = Customer
+	Name:      sevdesk.String("Acme GmbH"),
+	Status:    sevdesk.ContactStatusActive,
 	ExemptVAT: sevdesk.True,
 })
 ```

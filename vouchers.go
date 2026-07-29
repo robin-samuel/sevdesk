@@ -115,17 +115,26 @@ const (
 	VoucherStatusPaid VoucherStatus = 1000
 )
 
-// CreditDebit marks the direction of a voucher (or invoice booking).
+// CreditDebit marks which way the money moves on a voucher: [VoucherDebit] for
+// income, [VoucherCredit] for an expense.
 type CreditDebit string
 
 // CreditDebit values.
+//
+// Mind the direction: sevdesk follows the German Kreditor/Debitor convention, so
+// credit is the money-out side and debit the money-in side — the opposite of what
+// "credit" suggests in everyday English.
 const (
-	// VoucherCredit marks an incoming-money voucher (income, customer payment).
+	// VoucherCredit marks money leaving the business — an expense (Ausgabe).
+	// Supplier bills book to an expense account, and a refund to a customer
+	// books to a revenue-reduction account such as 4700 Erlösschmälerungen
+	// ([AccountDatevErloesschmaelerungen]). Pair it with an expense
+	// [TaxRule] like [TaxRuleDeductibleExpense].
 	VoucherCredit CreditDebit = "C"
-	// VoucherDebit marks an outgoing-money voucher (expense, supplier bill).
+	// VoucherDebit marks money arriving — income (Einnahme). Books to a revenue
+	// account such as 4400 Erlöse 19 % USt ([AccountDatevErloese19USt]) with a
+	// revenue [TaxRule] like [TaxRuleTaxableRevenue].
 	VoucherDebit CreditDebit = "D"
-	// VoucherSpend marks petty-cash / employee-spending vouchers.
-	VoucherSpend CreditDebit = "S"
 )
 
 // VoucherType is the kind of voucher.
